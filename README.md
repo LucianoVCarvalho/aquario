@@ -48,11 +48,10 @@ npx expo run:ios
 ## Verificação
 
 ```bash
+npx expo lint                          # lint (ESLint + eslint-config-expo)
 npx tsc --noEmit                       # checagem de tipos
 npx expo export --platform android     # garante que o bundle compila
 ```
-
-> `npx expo lint` ainda não funciona: a instalação do ESLint esbarra num conflito de dependências do template.
 
 ## Estrutura
 

@@ -13,5 +13,5 @@ App mobile (Expo SDK 57 + Expo Router, Android e iOS) para acompanhar testes da 
 
 ## Notas
 - Parâmetros são totalmente personalizados (nome, unidade, frequência em dias, faixa ideal opcional).
-- `npx expo lint` falha ao instalar o ESLint (conflito de peer deps do template); validar com `npx tsc --noEmit` e `npx expo export --platform android`.
+- Validar com `npx expo lint` (ESLint 9 + eslint-config-expo, config em `eslint.config.js`), `npx tsc --noEmit` e `npx expo export --platform android`.
 - Ideias futuras: horário do lembrete configurável, vários aquários, registro de trocas de água, exportar histórico, build via EAS.
