@@ -1,13 +1,11 @@
 import * as Notifications from 'expo-notifications';
 import { Platform } from 'react-native';
 
-import { proximoTeste } from './aquario';
-import { Medicao, Parametro } from './types';
+import { momentoLembrete } from './aquario';
+import { Horario, Medicao, Parametro } from './types';
 
 const SUPORTADO = Platform.OS !== 'web';
 const CANAL = 'lembretes';
-/** Hora do dia em que o lembrete dispara. */
-export const HORA_LEMBRETE = 9;
 
 const idLembrete = (parametroId: string) => `lembrete-${parametroId}`;
 
@@ -42,14 +40,13 @@ export async function cancelarLembrete(parametroId: string) {
   await Notifications.cancelScheduledNotificationAsync(idLembrete(parametroId));
 }
 
-/** (Re)agenda o lembrete do parâmetro para o dia do próximo teste. */
-export async function agendarLembrete(parametro: Parametro, ultima?: Medicao) {
+/** (Re)agenda o lembrete do parâmetro para o dia do próximo teste, no horário configurado. */
+export async function agendarLembrete(parametro: Parametro, horario: Horario, ultima?: Medicao) {
   if (!SUPORTADO) return;
   await cancelarLembrete(parametro.id);
   if (!parametro.lembreteAtivo || !ultima) return;
 
-  const disparo = proximoTeste(parametro, ultima);
-  disparo.setHours(HORA_LEMBRETE, 0, 0, 0);
+  const disparo = momentoLembrete(parametro, ultima, horario);
   if (disparo.getTime() <= Date.now()) return;
 
   await Notifications.scheduleNotificationAsync({
@@ -67,8 +64,12 @@ export async function agendarLembrete(parametro: Parametro, ultima?: Medicao) {
   });
 }
 
-export async function sincronizarLembretes(parametros: Parametro[], ultimaDe: (id: string) => Medicao | undefined) {
+export async function sincronizarLembretes(
+  parametros: Parametro[],
+  horario: Horario,
+  ultimaDe: (id: string) => Medicao | undefined,
+) {
   if (!SUPORTADO) return;
   await Notifications.cancelAllScheduledNotificationsAsync();
-  for (const p of parametros) await agendarLembrete(p, ultimaDe(p.id));
+  for (const p of parametros) await agendarLembrete(p, horario, ultimaDe(p.id));
 }

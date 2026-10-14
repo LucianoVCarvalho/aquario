@@ -1,4 +1,4 @@
-import { Medicao, Parametro, Situacao } from './types';
+import { Horario, Medicao, Parametro, Situacao } from './types';
 
 const DIA_MS = 24 * 60 * 60 * 1000;
 
@@ -64,6 +64,25 @@ export function textoProximoTeste(data: Date, temMedicao: boolean) {
   if (dias === 0) return 'Testar hoje';
   if (dias === 1) return 'Testar amanhã';
   return `Próximo teste em ${dias} dias`;
+}
+
+export const HORARIO_PADRAO: Horario = { hora: 9, minuto: 0 };
+
+export function formatarHorario({ hora, minuto }: Horario) {
+  return `${String(hora).padStart(2, '0')}:${String(minuto).padStart(2, '0')}`;
+}
+
+/** Soma `passo` à hora ou ao minuto, dando a volta no relógio (sem alterar o outro campo). */
+export function ajustarHorario(horario: Horario, campo: keyof Horario, passo: number): Horario {
+  const limite = campo === 'hora' ? 24 : 60;
+  return { ...horario, [campo]: (((horario[campo] + passo) % limite) + limite) % limite };
+}
+
+/** Momento do lembrete: o dia do próximo teste, no horário configurado. */
+export function momentoLembrete(parametro: Parametro, ultima: Medicao | undefined, horario: Horario): Date {
+  const d = proximoTeste(parametro, ultima);
+  d.setHours(horario.hora, horario.minuto, 0, 0);
+  return d;
 }
 
 export function estaPendente(data: Date) {

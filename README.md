@@ -10,7 +10,7 @@ Feito com [Expo](https://expo.dev) (SDK 57) e [Expo Router](https://docs.expo.de
 - **Registro de testes** — anote o valor, a data e uma observação. Cada valor é classificado como *ideal*, *abaixo* ou *acima* da faixa.
 - **Histórico e gráfico** — veja a evolução de cada parâmetro ao longo do tempo.
 - **Pendentes primeiro** — a tela inicial mostra no topo os testes atrasados ou do dia.
-- **Lembretes** — notificação local às 9h no dia do próximo teste de cada parâmetro (pode ser desativada por parâmetro).
+- **Lembretes** — notificação local no dia do próximo teste de cada parâmetro, no horário escolhido em **Ajustes** (padrão 09:00). Pode ser desativada por parâmetro.
 - **Dados no aparelho** — tudo fica salvo localmente (AsyncStorage); não há conta nem servidor.
 
 ## Como rodar
@@ -48,6 +48,7 @@ npx expo run:ios
 ## Verificação
 
 ```bash
+npm test                               # testes automatizados (Jest + jest-expo)
 npx expo lint                          # lint (ESLint + eslint-config-expo)
 npx tsc --noEmit                       # checagem de tipos
 npx expo export --platform android     # garante que o bundle compila
@@ -62,9 +63,11 @@ src/
 │   ├── index.tsx             # lista de parâmetros (pendentes primeiro)
 │   ├── parametro/[id].tsx    # detalhe: gráfico e histórico
 │   ├── parametro/editar.tsx  # criar/editar parâmetro (?id= para editar)
-│   └── medicao/[id].tsx      # registrar um teste
+│   ├── medicao/[id].tsx      # registrar um teste
+│   └── configuracoes.tsx     # ajustes: horário dos lembretes
 ├── components/ui.tsx         # componentes visuais
 └── lib/
+    ├── __tests__/            # testes (Jest)
     ├── aquario.ts            # regras: próximo teste, situação, formatação pt-BR
     ├── notificacoes.ts       # agendamento dos lembretes (expo-notifications)
     ├── store.tsx             # estado global persistido em AsyncStorage
@@ -76,7 +79,6 @@ Para instalar novas dependências, use sempre `npx expo install <pacote>` para o
 
 ## Próximos passos
 
-- Horário do lembrete configurável
 - Vários aquários
 - Registro de trocas de água
 - Exportar o histórico

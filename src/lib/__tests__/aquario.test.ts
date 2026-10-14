@@ -1,11 +1,15 @@
 import {
+  ajustarHorario,
   diasEntre,
   estaPendente,
   formatarData,
   formatarDataHora,
+  formatarHorario,
+  HORARIO_PADRAO,
   formatarNumero,
   lerNumero,
   medicoesDo,
+  momentoLembrete,
   MODELOS,
   novoId,
   proximoTeste,
@@ -152,6 +156,36 @@ describe('próximo teste', () => {
     expect(estaPendente(data(2026, 3, 9))).toBe(true);
     expect(estaPendente(data(2026, 3, 10, 23, 0))).toBe(true);
     expect(estaPendente(data(2026, 3, 11, 0, 0))).toBe(false);
+  });
+});
+
+describe('horário do lembrete', () => {
+  it('padrão é 09:00', () => {
+    expect(HORARIO_PADRAO).toEqual({ hora: 9, minuto: 0 });
+  });
+
+  it('formata com dois dígitos', () => {
+    expect(formatarHorario({ hora: 9, minuto: 5 })).toBe('09:05');
+    expect(formatarHorario({ hora: 0, minuto: 0 })).toBe('00:00');
+    expect(formatarHorario({ hora: 23, minuto: 55 })).toBe('23:55');
+  });
+
+  it('ajusta hora e minuto dando a volta no relógio', () => {
+    expect(ajustarHorario({ hora: 9, minuto: 0 }, 'hora', 1)).toEqual({ hora: 10, minuto: 0 });
+    expect(ajustarHorario({ hora: 23, minuto: 30 }, 'hora', 1)).toEqual({ hora: 0, minuto: 30 });
+    expect(ajustarHorario({ hora: 0, minuto: 30 }, 'hora', -1)).toEqual({ hora: 23, minuto: 30 });
+    expect(ajustarHorario({ hora: 9, minuto: 55 }, 'minuto', 5)).toEqual({ hora: 9, minuto: 0 });
+    expect(ajustarHorario({ hora: 9, minuto: 0 }, 'minuto', -5)).toEqual({ hora: 9, minuto: 55 });
+  });
+
+  it('dispara no dia do próximo teste, no horário configurado', () => {
+    const ultima = medicao(data(2026, 3, 1, 20, 45));
+    expect(momentoLembrete(parametro({ frequenciaDias: 7 }), ultima, { hora: 18, minuto: 30 })).toEqual(
+      data(2026, 3, 8, 18, 30),
+    );
+    expect(momentoLembrete(parametro({ frequenciaDias: 1 }), ultima, { hora: 0, minuto: 0 })).toEqual(
+      data(2026, 3, 2, 0, 0),
+    );
   });
 });
 

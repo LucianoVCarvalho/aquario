@@ -3,8 +3,7 @@ import { useState } from 'react';
 import { Alert, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
 
 import { Botao, Campo } from '@/components/ui';
-import { formatarNumero, lerNumero, Modelo, MODELOS } from '@/lib/aquario';
-import { HORA_LEMBRETE } from '@/lib/notificacoes';
+import { formatarHorario, formatarNumero, lerNumero, Modelo, MODELOS } from '@/lib/aquario';
 import { useAquario } from '@/lib/store';
 import { cores } from '@/lib/tema';
 
@@ -12,7 +11,7 @@ const paraTexto = (n?: number) => (n === undefined ? '' : formatarNumero(n));
 
 export default function EditarParametro() {
   const { id } = useLocalSearchParams<{ id?: string }>();
-  const { parametros, salvarParametro, excluirParametro } = useAquario();
+  const { parametros, horario, salvarParametro, excluirParametro } = useAquario();
   const existente = id ? parametros.find((p) => p.id === id) : undefined;
 
   const [nome, setNome] = useState(existente?.nome ?? '');
@@ -111,7 +110,7 @@ export default function EditarParametro() {
           <View style={{ flex: 1 }}>
             <Text style={estilos.lembreteTitulo}>Lembrete</Text>
             <Text style={estilos.lembreteTexto}>
-              Notificar às {HORA_LEMBRETE}h no dia de refazer o teste.
+              Notificar às {formatarHorario(horario)} no dia de refazer o teste (altere em Ajustes).
             </Text>
           </View>
           <Switch

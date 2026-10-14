@@ -20,3 +20,6 @@ export type Medicao = {
 };
 
 export type Situacao = 'ok' | 'baixo' | 'alto' | 'sem-faixa';
+
+/** Horário do dia em que os lembretes disparam. */
+export type Horario = { hora: number; minuto: number };
